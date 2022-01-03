@@ -5,7 +5,8 @@
 #include "Player.h"
 
 class SquidGame {
-
+    int k;
+    int scale;
     FlippedTreeNode* Groups;
     Player* AllPlayers;
     Player* WaitingRoom;
@@ -15,6 +16,12 @@ public:
 
     SquidGame();
     ~SquidGame();
+    int GetK(){
+        return this->k;
+    }
+    int GetScale(){
+        return this->scale;
+    }
     void AddPlayerToGroup(int GroupID,int PlayerID,int Score);
     void RemovePlayer(int PlayerID);
     void IncreasePlayerLevel(int PlayerID,int increment);
