@@ -16,7 +16,7 @@ StatusType MergeGroups(void *DS, int GroupID1, int GroupID2){
     if(GroupID1 <= 0 || GroupID2 <= 0 || GroupID1 > ((SquidGame*)DS)->GetK()|| GroupID2>((SquidGame*)DS)->GetK()){
         return INVALID_INPUT;
     }
-
+    //TODO:ADD MERGE FUNCTION
 }
 
 StatusType AddPlayer(void *DS, int PlayerID, int GroupID, int score){

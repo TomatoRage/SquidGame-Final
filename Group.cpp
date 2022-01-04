@@ -10,11 +10,17 @@ Group::Group(int id){
         Waiting[i] = nullptr;
         deletedArray[i] = false;
     }
+    Levels.insert(0,*new BST<int,Player>);
 }
 
 Group::~Group() {
     delete[] Waiting;
     delete[] deletedArray;
+    Levels.ResetIterator();
+    int Key,*ket_ptr = &Key;
+    for(int i = 0; i < Levels.GetSize(); i++){
+       delete &Levels.NextIteration(&ket_ptr);
+    }
 }
 
 void Group::AddPlayer(int ID, int score) {
@@ -163,6 +169,7 @@ void Group::EnterWaitingPlayers() {
     for(int i = 0; i < Size; i++){
         if(Waiting[i]){
             Players.insert(Waiting[i]->GetID(),*Waiting[i]);
+            Levels.Find(0).insert(Waiting[i]->GetID(),*Waiting[i]);
             Waiting[i] = nullptr;
             deletedArray[i] = false;
         }
