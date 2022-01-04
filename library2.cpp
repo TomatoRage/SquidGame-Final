@@ -1,10 +1,11 @@
 #include "library2.h"
 #include "SquidGame.h"
 #include "stdexcept"
+#include "iostream"
 
 void *Init(int k, int scale){
     try{
-        SquidGame* DS = new SquidGame();
+        auto* DS = new SquidGame(k,scale);
         return (void*)DS;
     }catch(std::bad_alloc& e){
         return nullptr;

@@ -14,7 +14,7 @@ class SquidGame {
 
 public:
 
-    SquidGame();
+    SquidGame(int K,int Scale);
     ~SquidGame();
     int GetK(){
         return this->k;
