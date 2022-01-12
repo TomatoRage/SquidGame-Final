@@ -16,8 +16,14 @@ StatusType MergeGroups(void *DS, int GroupID1, int GroupID2){
     if(GroupID1 <= 0 || GroupID2 <= 0 || GroupID1 > ((SquidGame*)DS)->GetK()|| GroupID2>((SquidGame*)DS)->GetK()){
         return INVALID_INPUT;
     }
-
-    //TODO:ADD MERGE FUNCTION
+    try{
+        ((SquidGame*)DS)->MergeGroups(GroupID1,GroupID2);
+    }catch(std::bad_alloc& e){
+        return ALLOCATION_ERROR;
+    }catch (...){
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 StatusType AddPlayer(void *DS, int PlayerID, int GroupID, int score){
