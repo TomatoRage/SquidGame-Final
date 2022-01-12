@@ -10,7 +10,7 @@ Group::Group(int id){
         Waiting[i] = nullptr;
         deletedArray[i] = false;
     }
-    Levels.insert(0,*new BST<int,Player>);
+    Levels.insert(0,new BST<int,Player>);
 }
 
 Group::~Group() {
@@ -159,17 +159,56 @@ int Group::FindHash(int ID) {
 }
 
 void Group::IncreasePlayerLevel(int ID, int increment) {
-
     EnterWaitingPlayers();
-
+    Player p1 = this->Players.Find(ID);
+    Levels.Find(p1.GetLevel())->remove(ID);
+    int newlvl = p1.GetLevel() + increment;
+    Players.Find(ID).SetLevel(newlvl);
+    p1.SetLevel(newlvl);
+    try{
+        Levels.Find(newlvl)->insert(ID,p1);
+    }catch (BST<int,BST<int,Player>*>::KeyNotFound &e){
+        Levels.insert(newlvl,new BST<int,Player>);
+        Levels.Find(newlvl)->insert(ID,p1);
+    }
 }
 
+void Group::UpdatePlayerScore(int ID,int Score){
+    EnterWaitingPlayers();
+    Player p1 = this->Players.Find(ID);
+    Levels.Find(p1.GetLevel())->Find(ID).SetScore(Score);
+    Players.Find(ID).SetLevel(Score);
+}
+
+int Group::GetPercentInBounds(int score,int LowerLevel,int HigherLevel){
+    EnterWaitingPlayers();
+    int NumOfPlayers=0,key,*key_ptr = &key;
+    Levels.ResetIterator();
+    for (int i = 0; Levels.GetSize(); i++) {
+        BST<int, Player> *Tree = Levels.NextIteration(&key_ptr);
+        if(key < LowerLevel) continue;
+        else if( key > HigherLevel) break;
+        else{
+            Tree->ResetIterator();
+            int KEY,*KEY_PTR = &KEY;
+            for (int j = 0; j < Tree->GetSize();j++) {
+                if(Tree->NextIteration((&KEY_PTR)).GetScore() == score)
+                    NumOfPlayers++;
+            }
+        }
+    }
+    return NumOfPlayers;
+}
+int* Group::AvargeHighestPlayer(int NumOfPlayers){
+    int* lvls = new int[NumOfPlayers];
+
+}
 void Group::EnterWaitingPlayers() {
 
     for(int i = 0; i < Size; i++){
         if(Waiting[i]){
             Players.insert(Waiting[i]->GetID(),*Waiting[i]);
-            Levels.Find(0).insert(Waiting[i]->GetID(),*Waiting[i]);
+            Levels.Find(0)->insert(Waiting[i]->GetID(),*Waiting[i]);
             Waiting[i] = nullptr;
             deletedArray[i] = false;
         }

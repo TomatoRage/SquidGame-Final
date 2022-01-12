@@ -93,6 +93,9 @@
 		<Unit filename="/Users/ahmadghanayem/CLionProjects/SquidGame-Final/Group.h">
 			<Option target="SquidGame_Final"/>
 		</Unit>
+		<Unit filename="/Users/ahmadghanayem/CLionProjects/SquidGame-Final/Player.cpp">
+			<Option target="SquidGame_Final"/>
+		</Unit>
 		<Unit filename="/Users/ahmadghanayem/CLionProjects/SquidGame-Final/Player.h">
 			<Option target="SquidGame_Final"/>
 		</Unit>

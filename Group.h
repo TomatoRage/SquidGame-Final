@@ -14,7 +14,7 @@ class Group {
     const int RehashMultiplier = 1;
     const double ResizeRatio = 0.5;
 
-    BST<int,BST<int,Player>> Levels;
+    BST<int,BST<int,Player>*> Levels;
     BST<int,Player> Players;
     int ID;
     Player** Waiting;
@@ -32,7 +32,7 @@ public:
     void IncreasePlayerLevel(int ID,int increment);
     void UpdatePlayerScore(int ID,int Score);
     int GetPercentInBounds(int score,int LowerLevel,int HigherLevel);
-    int AvargeHighestPlayer(int NumOfPlayers);
+    int* AvargeHighestPlayer(int NumOfPlayers);
 
     class FailureException{};
 };
