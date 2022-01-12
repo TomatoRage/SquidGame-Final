@@ -92,22 +92,9 @@ CMakeFiles/SquidGame_Final.dir/library2.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/SquidGame_Final.dir/library2.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/ahmadghanayem/CLionProjects/SquidGame-Final/library2.cpp -o CMakeFiles/SquidGame_Final.dir/library2.cpp.s
 
-CMakeFiles/SquidGame_Final.dir/Player.cpp.o: CMakeFiles/SquidGame_Final.dir/flags.make
-CMakeFiles/SquidGame_Final.dir/Player.cpp.o: ../Player.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/SquidGame_Final.dir/Player.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/SquidGame_Final.dir/Player.cpp.o -c /Users/ahmadghanayem/CLionProjects/SquidGame-Final/Player.cpp
-
-CMakeFiles/SquidGame_Final.dir/Player.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/SquidGame_Final.dir/Player.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/ahmadghanayem/CLionProjects/SquidGame-Final/Player.cpp > CMakeFiles/SquidGame_Final.dir/Player.cpp.i
-
-CMakeFiles/SquidGame_Final.dir/Player.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/SquidGame_Final.dir/Player.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/ahmadghanayem/CLionProjects/SquidGame-Final/Player.cpp -o CMakeFiles/SquidGame_Final.dir/Player.cpp.s
-
 CMakeFiles/SquidGame_Final.dir/Group.cpp.o: CMakeFiles/SquidGame_Final.dir/flags.make
 CMakeFiles/SquidGame_Final.dir/Group.cpp.o: ../Group.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/SquidGame_Final.dir/Group.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/SquidGame_Final.dir/Group.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/SquidGame_Final.dir/Group.cpp.o -c /Users/ahmadghanayem/CLionProjects/SquidGame-Final/Group.cpp
 
 CMakeFiles/SquidGame_Final.dir/Group.cpp.i: cmake_force
@@ -120,7 +107,7 @@ CMakeFiles/SquidGame_Final.dir/Group.cpp.s: cmake_force
 
 CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o: CMakeFiles/SquidGame_Final.dir/flags.make
 CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o: ../SquidGame.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o -c /Users/ahmadghanayem/CLionProjects/SquidGame-Final/SquidGame.cpp
 
 CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.i: cmake_force
@@ -135,7 +122,6 @@ CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.s: cmake_force
 SquidGame_Final_OBJECTS = \
 "CMakeFiles/SquidGame_Final.dir/main.cpp.o" \
 "CMakeFiles/SquidGame_Final.dir/library2.cpp.o" \
-"CMakeFiles/SquidGame_Final.dir/Player.cpp.o" \
 "CMakeFiles/SquidGame_Final.dir/Group.cpp.o" \
 "CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o"
 
@@ -144,12 +130,11 @@ SquidGame_Final_EXTERNAL_OBJECTS =
 
 SquidGame_Final: CMakeFiles/SquidGame_Final.dir/main.cpp.o
 SquidGame_Final: CMakeFiles/SquidGame_Final.dir/library2.cpp.o
-SquidGame_Final: CMakeFiles/SquidGame_Final.dir/Player.cpp.o
 SquidGame_Final: CMakeFiles/SquidGame_Final.dir/Group.cpp.o
 SquidGame_Final: CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o
 SquidGame_Final: CMakeFiles/SquidGame_Final.dir/build.make
 SquidGame_Final: CMakeFiles/SquidGame_Final.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable SquidGame_Final"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable SquidGame_Final"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/SquidGame_Final.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/SquidGame_Final.dir/Group.cpp.o"
-  "CMakeFiles/SquidGame_Final.dir/Player.cpp.o"
   "CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o"
   "CMakeFiles/SquidGame_Final.dir/library2.cpp.o"
   "CMakeFiles/SquidGame_Final.dir/main.cpp.o"

@@ -27,6 +27,7 @@ class BST{
     node* RotateRight(node* &Node);
     node* RotateLeft(node* &Node);
     node* FindSmallestNode(node* Tree);
+    node* FindBiggestNode(node* Tree);
     Info& FindNode(Key key,node* Tree);
     void DeleteNode(node*& ToDelete);
 
@@ -38,6 +39,8 @@ public:
     void remove(Key key);
     int GetSize();
     void ResetIterator();
+    void SetLastIterator();
+    Info& PreIteration(Key** key);
     Info& NextIteration(Key** key);
     int GetHeight();
     Info& Find(Key key);

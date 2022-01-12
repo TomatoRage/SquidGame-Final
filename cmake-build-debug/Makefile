@@ -153,30 +153,6 @@ Group.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SquidGame_Final.dir/build.make CMakeFiles/SquidGame_Final.dir/Group.cpp.s
 .PHONY : Group.cpp.s
 
-Player.o: Player.cpp.o
-.PHONY : Player.o
-
-# target to build an object file
-Player.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/SquidGame_Final.dir/build.make CMakeFiles/SquidGame_Final.dir/Player.cpp.o
-.PHONY : Player.cpp.o
-
-Player.i: Player.cpp.i
-.PHONY : Player.i
-
-# target to preprocess a source file
-Player.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/SquidGame_Final.dir/build.make CMakeFiles/SquidGame_Final.dir/Player.cpp.i
-.PHONY : Player.cpp.i
-
-Player.s: Player.cpp.s
-.PHONY : Player.s
-
-# target to generate assembly for a file
-Player.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/SquidGame_Final.dir/build.make CMakeFiles/SquidGame_Final.dir/Player.cpp.s
-.PHONY : Player.cpp.s
-
 SquidGame.o: SquidGame.cpp.o
 .PHONY : SquidGame.o
 
@@ -261,9 +237,6 @@ help:
 	@echo "... Group.o"
 	@echo "... Group.i"
 	@echo "... Group.s"
-	@echo "... Player.o"
-	@echo "... Player.i"
-	@echo "... Player.s"
 	@echo "... SquidGame.o"
 	@echo "... SquidGame.i"
 	@echo "... SquidGame.s"

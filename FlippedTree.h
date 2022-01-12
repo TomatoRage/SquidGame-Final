@@ -9,7 +9,7 @@ struct FlippedTreeNode{
     int index;
     int TotalSons;
     Group* GP;
-
+    FlippedTreeNode** Sons;
 };
 
 #endif //FLIPPEDTREE_H

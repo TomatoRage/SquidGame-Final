@@ -30,6 +30,7 @@ class SquidGame {
     int FindPlayerHash(int ID);
     int FindWaitingHash(int ID);
     void EnterWaitingPlayers();
+    int FindGroupFather(int GroupID);
 
 public:
 

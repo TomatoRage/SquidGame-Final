@@ -31,8 +31,8 @@ public:
     void RemovePlayer(int ID);
     void IncreasePlayerLevel(int ID,int increment);
     void UpdatePlayerScore(int ID,int Score);
-    double GetPercentInBounds(int score,int LowerLevel,int HigherLevel);
-    double AvargeHighestPlayer(int NumOfPlayers);
+    int GetPercentInBounds(int score,int LowerLevel,int HigherLevel);
+    int AvargeHighestPlayer(int NumOfPlayers);
 
     class FailureException{};
 };

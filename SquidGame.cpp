@@ -19,6 +19,10 @@ SquidGame::SquidGame(int K, int Scale) {
        Groups->index = i;
        Groups->GP = new Group(i);
        Groups->TotalSons = 0;
+       Groups->Sons = new FlippedTreeNode*[K];
+       for(int j = 0; j < K; j++){
+           Groups->Sons[j] = nullptr;
+       }
    }
 
    Level.insert(0,new BST<int,Player>);
@@ -273,7 +277,18 @@ void SquidGame::getPerecentOfPlayersWithScore(int GroupID, int Score, int LowerL
         *player = double(NumOfPlayers)/double(CurrentTotalPlayers);
         return;
     }
-        *player = Groups[GroupID].GP->GetPercentInBounds(Score,LowerLevel,HigherLevel);
+
+    int TotalPlayers = 0;
+    int Index = FindGroupFather(GroupID);
+
+    for(int i = 0; i < NumOfGroups; i++){
+        if(Groups[Index].Sons[i] == nullptr)
+            continue;
+        TotalPlayers += Groups[Index].Sons[i]->GP->GetPercentInBounds(Score,LowerLevel,HigherLevel);
+    }
+
+    *player = double(TotalPlayers)/double(CurrentTotalPlayers);
+
 }
 
 void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
@@ -282,8 +297,12 @@ void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
 
     if(GroupID == 0){
 
+        if(CurrentTotalPlayers < m)
+            throw FailureException();
 
+        Level.ResetIterator();
+        for(int i = 0; < )
 
     }
-    *AVG = Groups[GroupID].GP->AvargeHighestPlayer(m);
+    //*AVG = Groups[GroupID].GP->AvargeHighestPlayer(m);
 }

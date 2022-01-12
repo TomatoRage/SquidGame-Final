@@ -253,6 +253,43 @@ void BST<Key, Info>::ResetIterator(){
     iterator = FindSmallestNode(iterator);
 }
 
+template<class Key,class  Info>
+typename BST<Key,Info>::node* BST<Key,Info>::FindBiggestNode(node *Tree) {
+    if(Tree == nullptr)
+        return Tree;
+    else if(Tree->right_son == nullptr)
+        return Tree;
+    return FindSmallestNode(Tree->right_son);
+}
+
+template<class Key,class Info>
+void BST<Key,Info>::SetLastIterator(){
+    iterator = root;
+    iterator = FindBiggestNode(iterator);
+}
+
+template<class Key,class Info>
+Info &BST<Key, Info>::PreIteration(Key **key) {
+
+    if(iterator == nullptr)
+        throw FailureException();
+    **key = iterator->key;
+    Info& Temp = iterator->info;
+    if (iterator->left_son) {
+        iterator = iterator->left_son;
+        while (iterator->right_son) {
+            iterator = iterator->right_son;
+        }
+    } else {
+        while (iterator->father && iterator == iterator->father->left_son) {
+            iterator = iterator->father;
+        }
+        iterator = iterator->father;
+    }
+    return Temp;
+
+}
+
 template<class Key,class Info>
 Info& BST<Key, Info>::NextIteration(Key **key) {
     if(iterator == nullptr)
