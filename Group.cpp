@@ -199,9 +199,30 @@ int Group::GetPercentInBounds(int score,int LowerLevel,int HigherLevel){
     }
     return NumOfPlayers;
 }
-int* Group::AvargeHighestPlayer(int NumOfPlayers){
-    int* lvls = new int[NumOfPlayers];
-
+int* Group::AvargeHighestPlayer(int NumOfPlayers) {
+    EnterWaitingPlayers();
+    Levels.SetLastIterator();
+    int *Array = new int[NumOfPlayers];
+    int Last = 0;
+    int key, *key_ptr = &key;
+    for (int i = 0; i < NumOfPlayers; i++) {
+        BST<int, Player> *Tree = Levels.PreIteration(&key_ptr);
+        if (Tree->GetSize() >= NumOfPlayers - Last) {
+            for (int j = 0; j < Tree->GetSize(); j++) {
+                if (Last + j == NumOfPlayers)
+                    break;
+                Array[Last + j] = key;
+            }
+        } else {
+            for (int j = 0; j < Tree->GetSize(); j++) {
+                if (Last + j == NumOfPlayers)
+                    break;
+                Array[Last + j] = key;
+            }
+            Last += Tree->GetSize() - 1;
+        }
+    }
+    return Array;
 }
 void Group::EnterWaitingPlayers() {
 

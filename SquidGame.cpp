@@ -294,15 +294,61 @@ void SquidGame::getPerecentOfPlayersWithScore(int GroupID, int Score, int LowerL
 void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
 
     EnterWaitingPlayers();
-
     if(GroupID == 0){
 
         if(CurrentTotalPlayers < m)
             throw FailureException();
+        Level.SetLastIterator();
+        int * Array = new int[m];
+        int Last = 0;
+        int key,*key_ptr = &key;
+        int Total = 0;
 
-        Level.ResetIterator();
-        for(int i = 0; < )
+        for(int i = 0; i < NumOfGroups; i++){
+            BST<int,Player>* Tree = Level.PreIteration(&key_ptr);
+             if(Tree->GetSize() >= m-Last){
+                 for(int j = 0; j < Tree->GetSize(); j++){
+                     if(Last + j == m)
+                         break;
+                     Array[Last + j] = key;
+                 }
+             }
+             else{
+                 for(int j = 0; j < Tree->GetSize(); j++){
+                     if(Last + j == m)
+                         break;
+                     Array[Last + j] = key;
+                 }
+                 Last += Tree->GetSize()-1;
+             }
+        }
 
+        for(int i = 0; i < m; i++)
+            Total += Array[m];
+
+        *AVG = double(Total)/double(m);
+        delete[] Array;
+        return;
     }
-    //*AVG = Groups[GroupID].GP->AvargeHighestPlayer(m);
+
+    int * AllArray = new int[m*NumOfGroups];
+    int * a1 = new int[m];
+    int last = 0;
+    int index = FindGroupFather(GroupID);
+
+    for(int i = 0 ; i < NumOfGroups; i++){
+        if(Groups[index].Sons[i] == nullptr)
+            continue;
+        a1 = Groups[index].Sons[i]->GP->AvargeHighestPlayer(m);
+        for (int j = 0; j < m; j++) {
+            AllArray[last + j] = a1[j];
+        }
+        last+=m;
+    }
+    sortarray[AllArray];
+    int total = 0;
+    for (int i = 0; i < m; i++) {
+        total+=AllArray[i];
+    }
+    *AVG = double(total)/double(m);
 }
