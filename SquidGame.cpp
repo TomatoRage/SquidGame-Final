@@ -345,10 +345,26 @@ void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
         }
         last+=m;
     }
-    sortarray[AllArray];
+    SortArray(AllArray,m*NumOfGroups);
     int total = 0;
     for (int i = 0; i < m; i++) {
         total+=AllArray[i];
     }
     *AVG = double(total)/double(m);
+}
+
+void SquidGame:: SortArray(int* arr,int size){
+    int temp;
+    for(int i=0;i<size;i++)
+    {
+        for(int j=i+1;j<size;j++)
+        {
+            if(arr[i]>arr[j])
+            {
+                temp  =arr[i];
+                arr[i]=arr[j];
+                arr[j]=temp;
+            }
+        }
+    }
 }
