@@ -9,7 +9,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/Group.cpp" "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles/SquidGame_Final.dir/Group.cpp.o"
-  "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/Player.cpp" "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles/SquidGame_Final.dir/Player.cpp.o"
   "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/SquidGame.cpp" "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles/SquidGame_Final.dir/SquidGame.cpp.o"
   "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/library2.cpp" "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles/SquidGame_Final.dir/library2.cpp.o"
   "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/main.cpp" "/Users/ahmadghanayem/CLionProjects/SquidGame-Final/cmake-build-debug/CMakeFiles/SquidGame_Final.dir/main.cpp.o"

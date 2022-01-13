@@ -15,13 +15,13 @@ SquidGame::SquidGame(int K, int Scale) {
        deletedPlayersArray[i] = false;
    }
    for(int i = 0; i < K;i++){
-       Groups->father = nullptr;
-       Groups->index = i;
-       Groups->GP = new Group(i);
-       Groups->TotalSons = 0;
-       Groups->Sons = new FlippedTreeNode*[K];
+       Groups[i].father = nullptr;
+       Groups[i].index = i;
+       Groups[i].GP = new Group(i);
+       Groups[i].TotalSons = 0;
+       Groups[i].Sons = new FlippedTreeNode*[K];
        for(int j = 0; j < K; j++){
-           Groups->Sons[j] = nullptr;
+           Groups[i].Sons[j] = nullptr;
        }
    }
 
@@ -36,7 +36,7 @@ SquidGame::~SquidGame() {
     Level.ResetIterator();
     int key, *key_ptr = &key;
     for(int i = 0; i < Level.GetSize(); i++){
-        delete &Level.NextIteration(&key_ptr);
+        delete Level.NextIteration(&key_ptr);
     }
     for(int i = 0; i < NumOfGroups; i++){
         delete Groups[i].GP;
@@ -56,32 +56,6 @@ void SquidGame::AddPlayerToGroup(int GroupID, int PlayerID, int Score) {
 
     Player* p = new Player(Score, PlayerID, GroupID);
     Groups[GroupID].GP->AddPlayer(PlayerID,Score);
-
-    InsertPlayer(PlayerID,p);
-
-    if(double(CurrentTotalPlayers)/double(PlayersSize) > ResizeRatio){
-        int size = FindNextPrime(PlayersSize*2);
-        auto** NewArray = new Player*[size];
-        auto* newDeleteArray = new bool[size];
-
-        for(int i = 0; i < size; i++){
-            NewArray[i] = nullptr;
-            newDeleteArray[i] = false;
-        }
-
-        for(int i = 0; i < PlayersSize; i++){
-            NewArray[i] = AllPlayers[i];
-            newDeleteArray[i] = deletedPlayersArray[i];
-        }
-
-
-        delete[] AllPlayers;
-        delete[] deletedPlayersArray;
-
-        AllPlayers = NewArray;
-        deletedPlayersArray = newDeleteArray;
-        PlayersSize = size;
-    }
 
     InsertWait(PlayerID,p);
 
@@ -252,12 +226,12 @@ void SquidGame::getPerecentOfPlayersWithScore(int GroupID, int Score, int LowerL
 
     EnterWaitingPlayers();
 
-    int NumOfPlayers=0,key,*key_ptr = &key;
+    int NumOfPlayers=0,Total = 0,key,*key_ptr = &key;
 
-    if(GroupID == 0) {
+    if(GroupID == -1) {
         Level.ResetIterator();
 
-        for (int i = 0; Level.GetSize(); i++) {
+        for (int i = 0; i < Level.GetSize(); i++) {
             BST<int, Player> *Tree = Level.NextIteration(&key_ptr);
 
             if (key < LowerLevel)
@@ -271,10 +245,12 @@ void SquidGame::getPerecentOfPlayersWithScore(int GroupID, int Score, int LowerL
                     if(Tree->NextIteration(&KEY_PTR).GetScore() == Score){
                         NumOfPlayers++;
                     }
+                    Total++;
+
                 }
             }
         }
-        *player = double(NumOfPlayers)/double(CurrentTotalPlayers);
+        *player = (double(NumOfPlayers)/double(Total))*100;
         return;
     }
 
@@ -294,7 +270,7 @@ void SquidGame::getPerecentOfPlayersWithScore(int GroupID, int Score, int LowerL
 void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
 
     EnterWaitingPlayers();
-    if(GroupID == 0){
+    if(GroupID == -1){
 
         if(CurrentTotalPlayers < m)
             throw FailureException();
@@ -332,9 +308,18 @@ void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
     }
 
     int * AllArray = new int[m*NumOfGroups];
-    int * a1 = new int[m];
+    int * a1;
     int last = 0;
     int index = FindGroupFather(GroupID);
+
+    for(int i = 0; i < m*NumOfGroups; i++)
+        AllArray[i] = -1;
+
+    a1 = Groups[index].GP->AvargeHighestPlayer(m);
+    for (int j = 0; j < m; j++) {
+        AllArray[last + j] = a1[j];
+    }
+    last+=m;
 
     for(int i = 0 ; i < NumOfGroups; i++){
         if(Groups[index].Sons[i] == nullptr)
@@ -345,10 +330,10 @@ void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
         }
         last+=m;
     }
-    SortArray(AllArray,m*NumOfGroups);
+    SortArray(AllArray,last);
     int total = 0;
-    for (int i = 0; i < m; i++) {
-        total+=AllArray[i];
+    for (int i = 1; i < m+1; i++) {
+        total+=AllArray[last - i];
     }
     *AVG = double(total)/double(m);
 }
@@ -361,10 +346,200 @@ void SquidGame:: SortArray(int* arr,int size){
         {
             if(arr[i]>arr[j])
             {
-                temp  =arr[i];
+                temp =arr[i];
                 arr[i]=arr[j];
                 arr[j]=temp;
             }
         }
     }
+}
+
+void SquidGame::MergeGroups(int Group1, int Group2) {
+
+    FlippedTreeNode* HostRoot,*OtherRoot;
+
+    int Hostindex = FindGroupFather(Group1);
+    int ToBeUnitedIndex = FindGroupFather(Group2);
+
+    HostRoot = &Groups[Hostindex];
+    OtherRoot = &Groups[ToBeUnitedIndex];
+
+    if(HostRoot == OtherRoot)
+        throw FailureException();
+
+    OtherRoot->father = HostRoot;
+    HostRoot->Sons[ToBeUnitedIndex] = OtherRoot;
+    HostRoot->TotalSons += OtherRoot->TotalSons+1;
+}
+
+void SquidGame::InsertPlayer(int key, Player *player) {
+    int HashFunction = key%HashFunctionMod;
+    int StepFunction = 1+(key%5);
+    int k = 0;
+    while(true){
+        int index = (HashFunction+k*StepFunction) % PlayersSize;
+        if(AllPlayers[index] == nullptr){
+            deletedPlayersArray[index] = false;
+            AllPlayers[index] = player;
+            player->SetID(key);
+            CurrentTotalPlayers++;
+            return;
+        }
+        else if(AllPlayers[index]->GetID() == key)
+            throw FailureException();
+        k++;
+    }
+}
+
+void SquidGame::InsertWait(int key, Player *player) {
+    int HashFunction = key%HashFunctionMod;
+    int StepFunction = 1+(key%5);
+    int k = 0;
+    while(true){
+        int index = (HashFunction+k*StepFunction) % WaitingSize;
+        if(WaitingRoom[index] == nullptr){
+            deletedWaitingArray[index] = false;
+            WaitingRoom[index] = player;
+            player->SetID(key);
+            CurrentTotalWaiting++;
+            return;
+        }
+        else if(WaitingRoom[index]->GetID() == key)
+            throw FailureException();
+        k++;
+    }
+}
+
+int SquidGame::FindNextPrime(int start) {
+    int PrimeContainer[start];
+    int size = 1;
+    int i = 3;
+    PrimeContainer[0] = 2;
+    while(true){
+        int isPrime = true;
+        for(int j = 0; j < size; j++){
+            if(i % PrimeContainer[j] == 0){
+                isPrime = false;
+                break;
+            }
+        }
+        if(isPrime) {
+            PrimeContainer[size] = i;
+            size++;
+            if(i > start)
+                return i;
+        }
+        i += 2 ;
+    }
+}
+
+int SquidGame::FindPlayerHash(int ID) {
+
+    int HashFunction = ID%HashFunctionMod;
+    int StepFunction = 1+(ID%5);
+    int k = 0;
+
+    while(true){
+        int index = (HashFunction+k*StepFunction) % PlayersSize;
+        if(AllPlayers[index] == nullptr && !deletedPlayersArray[index]){
+            return -1;
+        }
+        else if(AllPlayers[index] != nullptr){
+            if(AllPlayers[index]->GetID() == ID)
+                return index;
+        }
+        k++;
+    }
+
+}
+
+int SquidGame::FindWaitingHash(int ID) {
+
+    int HashFunction = ID%HashFunctionMod;
+    int StepFunction = 1+(ID%5);
+    int k = 0;
+
+    while(true){
+        int index = (HashFunction+k*StepFunction) % WaitingSize;
+        if(WaitingRoom[index] == nullptr && !deletedWaitingArray[index]){
+            return -1;
+        }
+        else if(WaitingRoom[index] != nullptr){
+            if(WaitingRoom[index]->GetID() == ID)
+                return index;
+        }
+        k++;
+    }
+
+}
+
+void SquidGame::EnterWaitingPlayers() {
+
+    for(int i = 0; i < WaitingSize; i++){
+        if(WaitingRoom[i]){
+            InsertPlayer(WaitingRoom[i]->GetID(),WaitingRoom[i]);
+
+            if(double(CurrentTotalPlayers)/double(PlayersSize) > ResizeRatio){
+                int size = FindNextPrime(PlayersSize*2);
+                auto** NewArray = new Player*[size];
+                auto* newDeleteArray = new bool[size];
+
+                for(int i = 0; i < size; i++){
+                    NewArray[i] = nullptr;
+                    newDeleteArray[i] = false;
+                }
+
+                for(int i = 0; i < PlayersSize; i++){
+                    NewArray[i] = AllPlayers[i];
+                    newDeleteArray[i] = deletedPlayersArray[i];
+                }
+
+
+                delete[] AllPlayers;
+                delete[] deletedPlayersArray;
+
+                AllPlayers = NewArray;
+                deletedPlayersArray = newDeleteArray;
+                PlayersSize = size;
+            }
+
+
+            Level.Find(0)->insert(WaitingRoom[i]->GetID(),*WaitingRoom[i]);
+            WaitingRoom[i] = nullptr;
+            deletedWaitingArray[i] = false;
+        }
+    }
+
+}
+
+int SquidGame::FindGroupFather(int GroupID) {
+
+    if(Groups[GroupID].father == nullptr){
+        return GroupID;
+    }
+    else if(Groups[GroupID].father->father == nullptr){
+        return Groups[GroupID].father->index;
+    }else{
+        FlippedTreeNode* Node,*Temp,* Root = nullptr;
+
+        Node = &Groups[GroupID];
+        for(int i = 0; i < NumOfGroups; i++){
+            if(Root)
+                break;
+            if(Node->father == nullptr)
+                Root = Node;
+            Node = Node->father;
+        }
+        Node = &Groups[GroupID];
+        for(int i = 0; i < NumOfGroups; i++){
+            if(Node->father == nullptr)
+                break;
+            Temp = Node;
+            Node->TotalSons -= i;
+            Node = Node->father;
+            Temp->father = Root;
+        }
+        return Root->index;
+    }
+
 }

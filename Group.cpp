@@ -19,7 +19,7 @@ Group::~Group() {
     Levels.ResetIterator();
     int Key,*ket_ptr = &Key;
     for(int i = 0; i < Levels.GetSize(); i++){
-       delete &Levels.NextIteration(&ket_ptr);
+       delete Levels.NextIteration(&ket_ptr);
     }
 }
 
@@ -203,9 +203,12 @@ int* Group::AvargeHighestPlayer(int NumOfPlayers) {
     EnterWaitingPlayers();
     Levels.SetLastIterator();
     int *Array = new int[NumOfPlayers];
+    for(int i = 0; i < NumOfPlayers; i++){
+        Array[i] = -1;
+    }
     int Last = 0;
     int key, *key_ptr = &key;
-    for (int i = 0; i < NumOfPlayers; i++) {
+    for (int i = 0; i < Levels.GetSize(); i++) {
         BST<int, Player> *Tree = Levels.PreIteration(&key_ptr);
         if (Tree->GetSize() >= NumOfPlayers - Last) {
             for (int j = 0; j < Tree->GetSize(); j++) {
@@ -219,7 +222,12 @@ int* Group::AvargeHighestPlayer(int NumOfPlayers) {
                     break;
                 Array[Last + j] = key;
             }
-            Last += Tree->GetSize() - 1;
+            Last += Tree->GetSize();
+        }
+    }
+    if(Last < NumOfPlayers){
+        for(int i = 1; i < NumOfPlayers - Last;i++){
+            Array[NumOfPlayers - i] = -1;
         }
     }
     return Array;

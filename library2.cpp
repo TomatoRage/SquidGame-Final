@@ -17,7 +17,7 @@ StatusType MergeGroups(void *DS, int GroupID1, int GroupID2){
         return INVALID_INPUT;
     }
     try{
-        ((SquidGame*)DS)->MergeGroups(GroupID1,GroupID2);
+        ((SquidGame*)DS)->MergeGroups(GroupID1-1,GroupID2-1);
     }catch(std::bad_alloc& e){
         return ALLOCATION_ERROR;
     }catch (...){
@@ -27,11 +27,11 @@ StatusType MergeGroups(void *DS, int GroupID1, int GroupID2){
 }
 
 StatusType AddPlayer(void *DS, int PlayerID, int GroupID, int score){
-    if(!DS || GroupID < 0 || GroupID > ((SquidGame*)DS)->GetK() || score <= 0 || score > ((SquidGame*)DS)->GetScale()){
+    if(!DS || PlayerID <= 0||GroupID <= 0 || GroupID >= ((SquidGame*)DS)->GetK() || score <= 0 || score > ((SquidGame*)DS)->GetScale()){
         return INVALID_INPUT;
     }
     try{
-        ((SquidGame*)DS)->AddPlayerToGroup(GroupID,PlayerID,score);
+        ((SquidGame*)DS)->AddPlayerToGroup(GroupID-1,PlayerID,score);
     }catch(std::bad_alloc& e){
         return ALLOCATION_ERROR;
     }catch (...){
@@ -67,7 +67,7 @@ StatusType IncreasePlayerIDLevel(void *DS, int PlayerID, int LevelIncrease){
 }
 
 StatusType ChangePlayerIDScore(void *DS, int PlayerID, int NewScore){
-    if(!DS || NewScore <= 0 || NewScore > ((SquidGame*)DS)->GetScale()){
+    if(!DS || PlayerID <= 0 || NewScore <= 0 || NewScore > ((SquidGame*)DS)->GetScale()){
         return INVALID_INPUT;
     }
     try{
@@ -82,11 +82,11 @@ StatusType ChangePlayerIDScore(void *DS, int PlayerID, int NewScore){
 
 StatusType GetPercentOfPlayersWithScoreInBounds(void *DS, int GroupID, int score, int lowerLevel, int higherLevel,
                                                 double * players){
-    if(!DS || GroupID < 0 || GroupID > ((SquidGame*)DS)->GetK() || !players){
+    if(!DS || GroupID < 0 || GroupID >= ((SquidGame*)DS)->GetK() || !players){
         return INVALID_INPUT;
     }
     try{
-        ((SquidGame*)DS)->getPerecentOfPlayersWithScore(GroupID,score,lowerLevel,higherLevel,players);
+        ((SquidGame*)DS)->getPerecentOfPlayersWithScore(GroupID-1,score,lowerLevel,higherLevel,players);
     }catch (std::bad_alloc& e){
         return ALLOCATION_ERROR;
     }catch (...){
@@ -96,15 +96,29 @@ StatusType GetPercentOfPlayersWithScoreInBounds(void *DS, int GroupID, int score
 }
 
 StatusType AverageHighestPlayerLevelByGroup(void *DS, int GroupID, int m, double * level){
-    if(!DS || GroupID < 0 || GroupID > ((SquidGame*)DS)->GetK() || !level || m < 0){
+    if(!DS || GroupID < 0 || GroupID >= ((SquidGame*)DS)->GetK() || !level || m < 0){
         return INVALID_INPUT;
     }
     try{
-        ((SquidGame*)DS)->AvgHighestPlayerLevelByGroup(GroupID,m,level);
+        ((SquidGame*)DS)->AvgHighestPlayerLevelByGroup(GroupID-1,m,level);
     }catch (std::bad_alloc& e){
         return ALLOCATION_ERROR;
     }catch (...){
         return FAILURE;
     }
     return SUCCESS;
+}
+
+StatusType GetPlayersBound(void *DS, int GroupID, int score, int m,
+                           int * LowerBoundPlayers, int * HigherBoundPlayers){
+    return SUCCESS;
+}
+
+void Quit(void** DS){
+
+    if(!DS)
+        return;
+    delete *(SquidGame**)DS;
+    *DS = nullptr;
+
 }

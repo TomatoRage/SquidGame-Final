@@ -8,7 +8,12 @@ int PlayerID;
 int Group;
 
 public:
-    Player(int Score = -1,int ID = -1,int Group = -1,int Level = 0);
+    Player(int Score = -1,int ID = -1,int Group = -1,int Level = 0){
+        this->Score = Score;
+        this->Level = Level;
+        PlayerID = ID;
+        this->Group = Group;
+    }
     void SetID(int ID){
         this->PlayerID = ID;
     }

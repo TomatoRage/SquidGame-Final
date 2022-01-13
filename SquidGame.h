@@ -31,6 +31,7 @@ class SquidGame {
     int FindWaitingHash(int ID);
     void EnterWaitingPlayers();
     int FindGroupFather(int GroupID);
+    void SortArray(int* Arr,int Size);
 
 public:
 
