@@ -224,7 +224,7 @@ double Group::AvargeHighestPlayer(int NumOfPlayers) {
     for (int i = 0; i < Levels.GetSize(); i++) {
         BST<int, Player> *Tree = Levels.PreIteration(&key_ptr);
         if (Tree->GetSize() >= NumOfPlayers - Last) {
-            for (int j = 0; j < Tree->GetSize(); j++) {
+            for (int j = 0; j < Tree->GetSize()+1; j++) {
                 if (Last + j == NumOfPlayers)
                     goto OUT1;
                 Array[Last + j] = key;
