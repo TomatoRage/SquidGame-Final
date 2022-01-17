@@ -109,7 +109,7 @@ void SquidGame::AddPlayerToGroup(int GroupID, int PlayerID, int Score) {
 
 void SquidGame::RemovePlayer(int PlayerID) {
     int index = FindPlayerHash(PlayerID);
-
+    int WaitingIndex = FindWaitingHash(PlayerID);
     if(index == -1)
         throw FailureException();
 
@@ -151,8 +151,6 @@ void SquidGame::RemovePlayer(int PlayerID) {
             deletedPlayersArray[i] = false;
         }
     }
-
-    int WaitingIndex = FindWaitingHash(PlayerID);
 
     if(WaitingIndex == -1){
         Level.Find(PlayerLvl)->remove(PlayerID);
@@ -305,7 +303,7 @@ void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
                  for(int j = 0; j < Tree->GetSize()+1; j++){
                      if(Last + j == m)
                          goto OUT;
-                     Array[Last + j + 1] = key;
+                     Array[Last + j] = key;
                  }
              }
              else{
