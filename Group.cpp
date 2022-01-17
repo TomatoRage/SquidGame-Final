@@ -14,7 +14,7 @@ Group::Group(int id){
 }
 
 Group::~Group() {
-    for(int i = 0; i < CurrentTotalPlayers; i++){
+    for(int i = 0; i < Size; i++){
         delete Waiting[i];
     }
     delete[] Waiting;
@@ -25,8 +25,6 @@ Group::~Group() {
        delete Levels.NextIteration(&ket_ptr);
     }
     Levels.clear();
-
-
 }
 
 void Group::AddPlayer(int ID, int score) {

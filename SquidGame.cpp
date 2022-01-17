@@ -25,10 +25,6 @@ SquidGame::SquidGame(int K, int Scale) {
 }
 
 SquidGame::~SquidGame() {
-    delete[] AllPlayers;
-    delete[] WaitingRoom;
-    delete[] deletedPlayersArray;
-    delete[] deletedWaitingArray;
     Level.ResetIterator();
     int key, *key_ptr = &key;
     for(int i = 0; i < Level.GetSize(); i++){
@@ -38,6 +34,13 @@ SquidGame::~SquidGame() {
     for(int i = 0; i < NumOfGroups; i++){
         delete Groups[i].GP;
     }
+    for(int i = 0; i < PlayersSize; i++)
+        delete AllPlayers[i];
+
+    delete[] WaitingRoom;
+    delete[] deletedPlayersArray;
+    delete[] deletedWaitingArray;
+    delete[] AllPlayers;
     delete[] Groups;
 }
 
