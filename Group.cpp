@@ -251,7 +251,12 @@ void Group::EnterWaitingPlayers() {
     for(int i = 0; i < Size; i++){
         if(Waiting[i]){
             Players.insert(Waiting[i]->GetID(),*Waiting[i]);
-            Levels.Find(0)->insert(Waiting[i]->GetID(),*Waiting[i]);
+            try {
+                Levels.Find(0)->insert(Waiting[i]->GetID(), *Waiting[i]);
+            }catch(BST<int,BST<int,Player>*>::KeyNotFound &e){
+                Levels.insert(0,new BST<int,Player>);
+                Levels.Find(0)->insert(Waiting[i]->GetID(), *Waiting[i]);
+            }
             Waiting[i] = nullptr;
             deletedArray[i] = false;
         }
@@ -270,7 +275,8 @@ void Group::MergeGroup(Group *GP) {
     int KEY,*KEY_PTR = &KEY;
 
     for(int i = 0; i < GP->Players.GetSize(); i++){
-        Players.insert(key,*new Player(GP->Players.NextIteration(&key_ptr)));
+        Player PPP = GP->Players.NextIteration(&key_ptr);
+        Players.insert(key,PPP);
     }
 
     GP->Levels.ResetIterator();

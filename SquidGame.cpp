@@ -200,6 +200,7 @@ void SquidGame::IncreasePlayerLevel(int PlayerID, int increment) {
     EnterWaitingPlayers();
 
     int index = FindPlayerHash(PlayerID);
+    int WaitingIndex = FindWaitingHash(PlayerID);
 
     if(index == -1)
         throw FailureException();
@@ -273,6 +274,8 @@ void SquidGame::getPerecentOfPlayersWithScore(int GroupID, int Score, int LowerL
                 }
             }
         }
+        if(Total == 0)
+            throw FailureException();
         *player = (double(NumOfPlayers)/double(Total))*100;
         return;
     }
@@ -467,7 +470,12 @@ void SquidGame::EnterWaitingPlayers() {
 
     for(int i = 0; i < WaitingSize; i++){
         if(WaitingRoom[i]){
-            Level.Find(0)->insert(WaitingRoom[i]->GetID(),*WaitingRoom[i]);
+            try {
+                Level.Find(0)->insert(WaitingRoom[i]->GetID(), *WaitingRoom[i]);
+            }catch(BST<int,BST<int,Player>*>::KeyNotFound &e){
+                Level.insert(0,new BST<int,Player>);
+                Level.Find(0)->insert(WaitingRoom[i]->GetID(), *WaitingRoom[i]);
+            }
             WaitingRoom[i] = nullptr;
             deletedWaitingArray[i] = false;
         }
