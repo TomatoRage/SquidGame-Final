@@ -152,14 +152,20 @@ void SquidGame::RemovePlayer(int PlayerID) {
         }
     }
 
+
+
     if(WaitingIndex == -1){
         Level.Find(PlayerLvl)->remove(PlayerID);
         if(Level.Find(PlayerLvl)->GetSize() == 0){
             delete Level.Find(PlayerLvl);
             Level.remove(PlayerLvl);
         }
+        CurrentTotalPlayers --;
         return;
     }
+
+    CurrentTotalPlayers --;
+    CurrentTotalWaiting--;
 
     WaitingRoom[WaitingIndex] = nullptr;
     deletedWaitingArray[WaitingIndex] = true;
@@ -298,7 +304,7 @@ void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
         int key,*key_ptr = &key;
         int Total = 0;
 
-        for(int i = 0; i < NumOfGroups; i++){
+        for(int i = 0; i < Level.GetSize(); i++){
             BST<int,Player>* Tree = Level.PreIteration(&key_ptr);
              if(Tree->GetSize() >= m-Last){
                  for(int j = 0; j < Tree->GetSize()+1; j++){

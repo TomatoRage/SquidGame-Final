@@ -59,6 +59,7 @@ void Group::RemovePlayer(int ID) {
     if(index == -1){
         Levels.Find(Players.Find(ID).GetLevel())->remove(ID);
         Players.remove(ID);
+        CurrentTotalPlayers --;
         return;
     }
 
@@ -66,6 +67,8 @@ void Group::RemovePlayer(int ID) {
     Waiting[index] = nullptr;
     deletedArray[index] = true;
     DeleteActionCounter++;
+    CurrentTotalPlayers--;
+
 
     if(DeleteActionCounter >= RehashMultiplier*Size){
         auto** NewArray = new Player*[Size];
