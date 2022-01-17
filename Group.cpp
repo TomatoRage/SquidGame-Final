@@ -62,7 +62,6 @@ void Group::RemovePlayer(int ID) {
         return;
     }
 
-    Players.remove(ID);
     delete Waiting[index];
     Waiting[index] = nullptr;
     deletedArray[index] = true;
