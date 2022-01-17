@@ -21,6 +21,7 @@ Group::~Group() {
     for(int i = 0; i < Levels.GetSize(); i++){
        delete Levels.NextIteration(&ket_ptr);
     }
+    Levels.clear();
 }
 
 void Group::AddPlayer(int ID, int score) {
@@ -56,11 +57,12 @@ void Group::RemovePlayer(int ID) {
     int index = FindHash(ID);
 
     if(index == -1){
+        Levels.Find(Players.Find(ID).GetLevel())->remove(ID);
         Players.remove(ID);
         return;
     }
 
-
+    Players.remove(ID);
     delete Waiting[index];
     Waiting[index] = nullptr;
     deletedArray[index] = true;
@@ -162,6 +164,12 @@ void Group::IncreasePlayerLevel(int ID, int increment) {
     EnterWaitingPlayers();
     Player p1 = this->Players.Find(ID);
     Levels.Find(p1.GetLevel())->remove(ID);
+
+    if(Levels.Find(p1.GetLevel())->GetSize() == 0) {
+        delete Levels.Find(p1.GetLevel());
+        Levels.remove(p1.GetLevel());
+    }
+
     int newlvl = p1.GetLevel() + increment;
     Players.Find(ID).SetLevel(newlvl);
     p1.SetLevel(newlvl);
@@ -169,7 +177,7 @@ void Group::IncreasePlayerLevel(int ID, int increment) {
         Levels.Find(newlvl)->insert(ID,p1);
     }catch (BST<int,BST<int,Player>*>::KeyNotFound &e){
         Levels.insert(newlvl,new BST<int,Player>);
-        Levels.Find(newlvl)->insert(ID,p1);
+        Levels.Find(newlvl)->insert(ID,*new Player(p1));
     }
 }
 
@@ -177,14 +185,14 @@ void Group::UpdatePlayerScore(int ID,int Score){
     EnterWaitingPlayers();
     Player p1 = this->Players.Find(ID);
     Levels.Find(p1.GetLevel())->Find(ID).SetScore(Score);
-    Players.Find(ID).SetLevel(Score);
+    Players.Find(ID).SetScore(Score);
 }
 
-int Group::GetPercentInBounds(int score,int LowerLevel,int HigherLevel){
+double Group::GetPercentInBounds(int score,int LowerLevel,int HigherLevel){
     EnterWaitingPlayers();
-    int NumOfPlayers=0,key,*key_ptr = &key;
+    int NumOfPlayers=0,Total = 0,key,*key_ptr = &key;
     Levels.ResetIterator();
-    for (int i = 0; Levels.GetSize(); i++) {
+    for (int i = 0; i < Levels.GetSize(); i++) {
         BST<int, Player> *Tree = Levels.NextIteration(&key_ptr);
         if(key < LowerLevel) continue;
         else if( key > HigherLevel) break;
@@ -195,43 +203,50 @@ int Group::GetPercentInBounds(int score,int LowerLevel,int HigherLevel){
                 if(Tree->NextIteration((&KEY_PTR)).GetScore() == score)
                     NumOfPlayers++;
             }
+            Total++;
         }
     }
-    return NumOfPlayers;
+    if(Total == 0)
+        throw FailureException();
+    return (double(NumOfPlayers)/double(Total))*100;
 }
-int* Group::AvargeHighestPlayer(int NumOfPlayers) {
+double Group::AvargeHighestPlayer(int NumOfPlayers) {
     EnterWaitingPlayers();
-    Levels.SetLastIterator();
+
+    if(NumOfPlayers > Players.GetSize())
+        throw FailureException();
+
     int *Array = new int[NumOfPlayers];
-    for(int i = 0; i < NumOfPlayers; i++){
-        Array[i] = -1;
-    }
     int Last = 0;
+    int Total = 0;
     int key, *key_ptr = &key;
+
+    Levels.SetLastIterator();
     for (int i = 0; i < Levels.GetSize(); i++) {
         BST<int, Player> *Tree = Levels.PreIteration(&key_ptr);
         if (Tree->GetSize() >= NumOfPlayers - Last) {
             for (int j = 0; j < Tree->GetSize(); j++) {
                 if (Last + j == NumOfPlayers)
-                    break;
+                    goto OUT1;
                 Array[Last + j] = key;
             }
         } else {
             for (int j = 0; j < Tree->GetSize(); j++) {
                 if (Last + j == NumOfPlayers)
-                    break;
+                    goto OUT1;
                 Array[Last + j] = key;
             }
             Last += Tree->GetSize();
         }
     }
-    if(Last < NumOfPlayers){
-        for(int i = 1; i < NumOfPlayers - Last;i++){
-            Array[NumOfPlayers - i] = -1;
-        }
+    OUT1:
+    for(int i = 0; i < NumOfPlayers;i++){
+        Total += Array[i];
     }
-    return Array;
+
+    return double(Total)/double(NumOfPlayers);
 }
+
 void Group::EnterWaitingPlayers() {
 
     for(int i = 0; i < Size; i++){
@@ -240,6 +255,38 @@ void Group::EnterWaitingPlayers() {
             Levels.Find(0)->insert(Waiting[i]->GetID(),*Waiting[i]);
             Waiting[i] = nullptr;
             deletedArray[i] = false;
+        }
+    }
+
+}
+
+void Group::MergeGroup(Group *GP) {
+
+    EnterWaitingPlayers();
+
+    GP->EnterWaitingPlayers();
+    GP->Players.ResetIterator();
+
+    int key,*key_ptr = &key;
+    int KEY,*KEY_PTR = &KEY;
+
+    for(int i = 0; i < GP->Players.GetSize(); i++){
+        Players.insert(key,*new Player(GP->Players.NextIteration(&key_ptr)));
+    }
+
+    GP->Levels.ResetIterator();
+    for(int i = 0; i < GP->Levels.GetSize(); i++){
+        BST<int,Player>* Tree = GP->Levels.NextIteration(&key_ptr);
+        try {
+            Levels.Find(key);
+        }
+        catch(...){
+            Levels.insert(key,new BST<int,Player>);
+        }
+        Tree->ResetIterator();
+        for(int j = 0; j <  Tree->GetSize();j++){
+            Player P = Tree->NextIteration(&KEY_PTR);
+            Levels.Find(key)->insert(KEY,P);
         }
     }
 

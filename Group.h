@@ -22,7 +22,6 @@ class Group {
     void InsertHash(int key,Player* image);
     static int FindNextPrime(int start);
     int FindHash(int ID);
-    void EnterWaitingPlayers();
 
 public:
     Group(int id);
@@ -31,8 +30,10 @@ public:
     void RemovePlayer(int ID);
     void IncreasePlayerLevel(int ID,int increment);
     void UpdatePlayerScore(int ID,int Score);
-    int GetPercentInBounds(int score,int LowerLevel,int HigherLevel);
-    int* AvargeHighestPlayer(int NumOfPlayers);
+    double GetPercentInBounds(int score,int LowerLevel,int HigherLevel);
+    double AvargeHighestPlayer(int NumOfPlayers);
+    void EnterWaitingPlayers();
+    void MergeGroup(Group* GP);
 
     class FailureException{};
 };

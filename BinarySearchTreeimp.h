@@ -259,7 +259,7 @@ typename BST<Key,Info>::node* BST<Key,Info>::FindBiggestNode(node *Tree) {
         return Tree;
     else if(Tree->right_son == nullptr)
         return Tree;
-    return FindSmallestNode(Tree->right_son);
+    return FindBiggestNode(Tree->right_son);
 }
 
 template<class Key,class Info>

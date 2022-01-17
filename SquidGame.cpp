@@ -19,10 +19,6 @@ SquidGame::SquidGame(int K, int Scale) {
        Groups[i].index = i;
        Groups[i].GP = new Group(i);
        Groups[i].TotalSons = 0;
-       Groups[i].Sons = new FlippedTreeNode*[K];
-       for(int j = 0; j < K; j++){
-           Groups[i].Sons[j] = nullptr;
-       }
    }
 
    Level.insert(0,new BST<int,Player>);
@@ -38,6 +34,7 @@ SquidGame::~SquidGame() {
     for(int i = 0; i < Level.GetSize(); i++){
         delete Level.NextIteration(&key_ptr);
     }
+    Level.clear();
     for(int i = 0; i < NumOfGroups; i++){
         delete Groups[i].GP;
     }
@@ -55,7 +52,33 @@ void SquidGame::AddPlayerToGroup(int GroupID, int PlayerID, int Score) {
         throw FailureException();
 
     Player* p = new Player(Score, PlayerID, GroupID);
-    Groups[GroupID].GP->AddPlayer(PlayerID,Score);
+    Groups[FindGroupFather(GroupID)].GP->AddPlayer(PlayerID,Score);
+
+    InsertPlayer(PlayerID,p);
+
+    if(double(CurrentTotalPlayers)/double(PlayersSize) > ResizeRatio){
+        int size = FindNextPrime(PlayersSize*2);
+        auto** NewArray = new Player*[size];
+        auto* newDeleteArray = new bool[size];
+
+        for(int i = 0; i < size; i++){
+            NewArray[i] = nullptr;
+            newDeleteArray[i] = false;
+        }
+
+        for(int i = 0; i < PlayersSize; i++){
+            NewArray[i] = AllPlayers[i];
+            newDeleteArray[i] = deletedPlayersArray[i];
+        }
+
+
+        delete[] AllPlayers;
+        delete[] deletedPlayersArray;
+
+        AllPlayers = NewArray;
+        deletedPlayersArray = newDeleteArray;
+        PlayersSize = size;
+    }
 
     InsertWait(PlayerID,p);
 
@@ -92,7 +115,8 @@ void SquidGame::RemovePlayer(int PlayerID) {
 
     int GroupID = AllPlayers[index]->GetGroup();
     int PlayerLvl = AllPlayers[index]->GetLevel();
-    Groups[GroupID].GP->RemovePlayer(PlayerID);
+    Groups[FindGroupFather(GroupID)].GP->RemovePlayer(PlayerID);
+
 
     delete AllPlayers[index];
     AllPlayers[index] = nullptr;
@@ -139,9 +163,8 @@ void SquidGame::RemovePlayer(int PlayerID) {
         return;
     }
 
-    delete WaitingRoom[index];
-    WaitingRoom[index] = nullptr;
-    deletedWaitingArray[index] = true;
+    WaitingRoom[WaitingIndex] = nullptr;
+    deletedWaitingArray[WaitingIndex] = true;
     DeleteWaitingActionCounter++;
 
     if(DeleteWaitingActionCounter >= RehashMultiplier*WaitingSize){
@@ -184,7 +207,7 @@ void SquidGame::IncreasePlayerLevel(int PlayerID, int increment) {
         throw FailureException();
 
     int lvl = AllPlayers[index]->GetLevel();
-    int GroupID = AllPlayers[index]->GetGroup();
+    int GroupID = FindGroupFather(AllPlayers[index]->GetGroup());
 
     Level.Find(lvl)->remove(PlayerID);
 
@@ -194,6 +217,7 @@ void SquidGame::IncreasePlayerLevel(int PlayerID, int increment) {
     }
 
     AllPlayers[index]->SetLevel(lvl+increment);
+    Groups[GroupID].GP->EnterWaitingPlayers();
     Groups[GroupID].GP->IncreasePlayerLevel(PlayerID,increment);
 
     try{
@@ -218,7 +242,8 @@ void SquidGame::ChangePlayerIDScore(int PlayerID, int Score) {
 
     Level.Find(lvl)->Find(PlayerID).SetScore(Score);
 
-    Groups[AllPlayers[index]->GetGroup()].GP->UpdatePlayerScore(PlayerID,Score);
+    Groups[FindGroupFather(AllPlayers[index]->GetGroup())].GP->EnterWaitingPlayers();
+    Groups[FindGroupFather(AllPlayers[index]->GetGroup())].GP->UpdatePlayerScore(PlayerID,Score);
 
 }
 
@@ -254,16 +279,10 @@ void SquidGame::getPerecentOfPlayersWithScore(int GroupID, int Score, int LowerL
         return;
     }
 
-    int TotalPlayers = 0;
     int Index = FindGroupFather(GroupID);
 
-    for(int i = 0; i < NumOfGroups; i++){
-        if(Groups[Index].Sons[i] == nullptr)
-            continue;
-        TotalPlayers += Groups[Index].Sons[i]->GP->GetPercentInBounds(Score,LowerLevel,HigherLevel);
-    }
-
-    *player = double(TotalPlayers)/double(CurrentTotalPlayers);
+    Groups[Index].GP->EnterWaitingPlayers();
+    *player = Groups[Index].GP->GetPercentInBounds(Score,LowerLevel,HigherLevel);
 
 }
 
@@ -283,59 +302,32 @@ void SquidGame::AvgHighestPlayerLevelByGroup(int GroupID, int m, double *AVG) {
         for(int i = 0; i < NumOfGroups; i++){
             BST<int,Player>* Tree = Level.PreIteration(&key_ptr);
              if(Tree->GetSize() >= m-Last){
-                 for(int j = 0; j < Tree->GetSize(); j++){
+                 for(int j = 0; j < Tree->GetSize()+1; j++){
                      if(Last + j == m)
-                         break;
-                     Array[Last + j] = key;
+                         goto OUT;
+                     Array[Last + j + 1] = key;
                  }
              }
              else{
                  for(int j = 0; j < Tree->GetSize(); j++){
                      if(Last + j == m)
-                         break;
+                         goto OUT;
                      Array[Last + j] = key;
                  }
-                 Last += Tree->GetSize()-1;
+                 Last += Tree->GetSize();
              }
         }
-
+        OUT:
         for(int i = 0; i < m; i++)
-            Total += Array[m];
+            Total += Array[i];
 
         *AVG = double(Total)/double(m);
         delete[] Array;
         return;
     }
 
-    int * AllArray = new int[m*NumOfGroups];
-    int * a1;
-    int last = 0;
-    int index = FindGroupFather(GroupID);
-
-    for(int i = 0; i < m*NumOfGroups; i++)
-        AllArray[i] = -1;
-
-    a1 = Groups[index].GP->AvargeHighestPlayer(m);
-    for (int j = 0; j < m; j++) {
-        AllArray[last + j] = a1[j];
-    }
-    last+=m;
-
-    for(int i = 0 ; i < NumOfGroups; i++){
-        if(Groups[index].Sons[i] == nullptr)
-            continue;
-        a1 = Groups[index].Sons[i]->GP->AvargeHighestPlayer(m);
-        for (int j = 0; j < m; j++) {
-            AllArray[last + j] = a1[j];
-        }
-        last+=m;
-    }
-    SortArray(AllArray,last);
-    int total = 0;
-    for (int i = 1; i < m+1; i++) {
-        total+=AllArray[last - i];
-    }
-    *AVG = double(total)/double(m);
+    Groups[FindGroupFather(GroupID)].GP->EnterWaitingPlayers();
+    *AVG = Groups[FindGroupFather(GroupID)].GP->AvargeHighestPlayer(m);
 }
 
 void SquidGame:: SortArray(int* arr,int size){
@@ -365,10 +357,10 @@ void SquidGame::MergeGroups(int Group1, int Group2) {
     OtherRoot = &Groups[ToBeUnitedIndex];
 
     if(HostRoot == OtherRoot)
-        throw FailureException();
+        return;
 
+    HostRoot->GP->MergeGroup(OtherRoot->GP);
     OtherRoot->father = HostRoot;
-    HostRoot->Sons[ToBeUnitedIndex] = OtherRoot;
     HostRoot->TotalSons += OtherRoot->TotalSons+1;
 }
 
@@ -477,33 +469,6 @@ void SquidGame::EnterWaitingPlayers() {
 
     for(int i = 0; i < WaitingSize; i++){
         if(WaitingRoom[i]){
-            InsertPlayer(WaitingRoom[i]->GetID(),WaitingRoom[i]);
-
-            if(double(CurrentTotalPlayers)/double(PlayersSize) > ResizeRatio){
-                int size = FindNextPrime(PlayersSize*2);
-                auto** NewArray = new Player*[size];
-                auto* newDeleteArray = new bool[size];
-
-                for(int i = 0; i < size; i++){
-                    NewArray[i] = nullptr;
-                    newDeleteArray[i] = false;
-                }
-
-                for(int i = 0; i < PlayersSize; i++){
-                    NewArray[i] = AllPlayers[i];
-                    newDeleteArray[i] = deletedPlayersArray[i];
-                }
-
-
-                delete[] AllPlayers;
-                delete[] deletedPlayersArray;
-
-                AllPlayers = NewArray;
-                deletedPlayersArray = newDeleteArray;
-                PlayersSize = size;
-            }
-
-
             Level.Find(0)->insert(WaitingRoom[i]->GetID(),*WaitingRoom[i]);
             WaitingRoom[i] = nullptr;
             deletedWaitingArray[i] = false;
