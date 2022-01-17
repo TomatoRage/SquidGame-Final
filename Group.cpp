@@ -201,8 +201,8 @@ double Group::GetPercentInBounds(int score,int LowerLevel,int HigherLevel){
             for (int j = 0; j < Tree->GetSize();j++) {
                 if(Tree->NextIteration((&KEY_PTR)).GetScore() == score)
                     NumOfPlayers++;
+                Total++;
             }
-            Total++;
         }
     }
     if(Total == 0)

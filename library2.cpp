@@ -27,7 +27,7 @@ StatusType MergeGroups(void *DS, int GroupID1, int GroupID2){
 }
 
 StatusType AddPlayer(void *DS, int PlayerID, int GroupID, int score){
-    if(!DS || PlayerID <= 0||GroupID <= 0 || GroupID >= ((SquidGame*)DS)->GetK() || score <= 0 || score > ((SquidGame*)DS)->GetScale()){
+    if(!DS || PlayerID <= 0||GroupID <= 0 || GroupID > ((SquidGame*)DS)->GetK() || score <= 0 || score > ((SquidGame*)DS)->GetScale()){
         return INVALID_INPUT;
     }
     try{
@@ -82,7 +82,7 @@ StatusType ChangePlayerIDScore(void *DS, int PlayerID, int NewScore){
 
 StatusType GetPercentOfPlayersWithScoreInBounds(void *DS, int GroupID, int score, int lowerLevel, int higherLevel,
                                                 double * players){
-    if(!DS || GroupID < 0 || GroupID >= ((SquidGame*)DS)->GetK() || !players){
+    if(!DS || GroupID < 0 || GroupID > ((SquidGame*)DS)->GetK() || !players){
         return INVALID_INPUT;
     }
     try{
@@ -96,7 +96,7 @@ StatusType GetPercentOfPlayersWithScoreInBounds(void *DS, int GroupID, int score
 }
 
 StatusType AverageHighestPlayerLevelByGroup(void *DS, int GroupID, int m, double * level){
-    if(!DS || GroupID < 0 || GroupID >= ((SquidGame*)DS)->GetK() || !level || m < 0){
+    if(!DS || GroupID < 0 || GroupID > ((SquidGame*)DS)->GetK() || !level || m <= 0){
         return INVALID_INPUT;
     }
     try{

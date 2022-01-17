@@ -266,11 +266,9 @@ void SquidGame::getPerecentOfPlayersWithScore(int GroupID, int Score, int LowerL
                 Tree->ResetIterator();
                 int KEY,*KEY_PTR = &KEY;
                 for(int j = 0; j < Tree->GetSize();j++){
-                    if(Tree->NextIteration(&KEY_PTR).GetScore() == Score){
+                    if(Tree->NextIteration(&KEY_PTR).GetScore() == Score)
                         NumOfPlayers++;
-                    }
                     Total++;
-
                 }
             }
         }
