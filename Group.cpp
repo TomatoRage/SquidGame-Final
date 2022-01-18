@@ -182,7 +182,7 @@ void Group::IncreasePlayerLevel(int ID, int increment) {
         Levels.Find(newlvl)->insert(ID,p1);
     }catch (BST<int,BST<int,Player>*>::KeyNotFound &e){
         Levels.insert(newlvl,new BST<int,Player>);
-        Levels.Find(newlvl)->insert(ID,*new Player(p1));
+        Levels.Find(newlvl)->insert(ID,p1);
     }
 }
 
@@ -249,6 +249,7 @@ double Group::AvargeHighestPlayer(int NumOfPlayers) {
         Total += Array[i];
     }
 
+    delete[] Array;
     return double(Total)/double(NumOfPlayers);
 }
 
