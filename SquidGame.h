@@ -17,7 +17,7 @@ class SquidGame {
     bool* deletedPlayersArray;
     bool* deletedWaitingArray;
     const int RehashMultiplier = 1;
-    const double ResizeRatio = 0.5;
+    const double ResizeRatio = 0.8;
 
     FlippedTreeNode* Groups;
     Player** AllPlayers;

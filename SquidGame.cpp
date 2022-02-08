@@ -63,15 +63,32 @@ void SquidGame::AddPlayerToGroup(int GroupID, int PlayerID, int Score) {
         int size = FindNextPrime(PlayersSize*2);
         auto** NewArray = new Player*[size];
         auto* newDeleteArray = new bool[size];
+        DeletePlayersActionCounter = 0;
+        HashFunctionMod = size;
 
         for(int i = 0; i < size; i++){
             NewArray[i] = nullptr;
             newDeleteArray[i] = false;
         }
 
-        for(int i = 0; i < PlayersSize; i++){
-            NewArray[i] = AllPlayers[i];
-            newDeleteArray[i] = deletedPlayersArray[i];
+        for(int i=0; i < PlayersSize; i++) {
+            if (AllPlayers[i] != nullptr) {
+                int ID = AllPlayers[i]->GetID();
+                int HashFunction = ID % HashFunctionMod;
+                int StepFunction = 1 + (ID % 5);
+                int k = 0;
+                int HashIndex = (HashFunction + k * StepFunction) % size;
+
+                while (true) {
+                    if (NewArray[HashIndex] == nullptr) {
+                        NewArray[HashIndex] = AllPlayers[i];
+                        break;
+                    }
+                    k++;
+                    HashIndex = (HashFunction + k * StepFunction) % size;
+                }
+
+            }
         }
 
 
@@ -86,27 +103,7 @@ void SquidGame::AddPlayerToGroup(int GroupID, int PlayerID, int Score) {
     InsertWait(PlayerID,p);
 
     if(double(CurrentTotalWaiting)/double(WaitingSize) > ResizeRatio){
-        int size = FindNextPrime(WaitingSize*2);
-        auto** NewArray = new Player*[size];
-        auto* newDeleteArray = new bool[size];
-
-        for(int i = 0; i < size; i++){
-            NewArray[i] = nullptr;
-            newDeleteArray[i] = false;
-        }
-
-        for(int i = 0; i < WaitingSize; i++){
-            NewArray[i] = WaitingRoom[i];
-            newDeleteArray[i] = deletedWaitingArray[i];
-        }
-
-
-        delete[] WaitingRoom;
-        delete[] deletedWaitingArray;
-
-        WaitingRoom = NewArray;
-        deletedWaitingArray = newDeleteArray;
-        WaitingSize = size;
+        EnterWaitingPlayers();
     }
 }
 
@@ -148,11 +145,14 @@ void SquidGame::RemovePlayer(int PlayerID) {
                         break;
                     }
                     k++;
+                    HashIndex = (HashFunction+k*StepFunction) % PlayersSize;
                 }
 
             }
             deletedPlayersArray[i] = false;
         }
+        delete[] AllPlayers;
+        AllPlayers = NewArray;
     }
 
 
